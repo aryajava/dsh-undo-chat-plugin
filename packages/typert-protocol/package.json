@@ -1,0 +1,41 @@
+{
+  "name": "@deepseek-ai/dsh-typert-protocol",
+  "description": "Compiler-independent Remote metadata and Typert provider protocols (vendored for typert generation)",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "main": "vendor/index.js",
+  "types": "vendor/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./vendor/types/index.d.ts",
+      "default": "./vendor/index.js"
+    },
+    "./types": {
+      "types": "./vendor/types/types.d.ts",
+      "default": "./vendor/types/types.js"
+    },
+    "./remote-info": {
+      "types": "./vendor/types/remote-info.d.ts",
+      "default": "./vendor/types/remote-info.js"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "vendor/index.js",
+    "vendor/types/**/*.js",
+    "vendor/types/**/*.d.ts"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@deepseek-ai/dsh-brand": "^0.2.1-rc.3",
+    "zod": "^4.4.3"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "~4.0.5"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "~4.0.5"
+  }
+}

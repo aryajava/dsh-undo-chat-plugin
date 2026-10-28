@@ -1,0 +1,33 @@
+packages:
+  - 'packages/*'
+allowBuilds:
+  esbuild: true
+  koffi: true
+# Internal packages declare real version ranges in their manifests (so an
+# installed copy resolves from a registry/links); this workspace still links
+# them to the local sources during development.
+overrides:
+  # cordis's own peer plugins decide its peer-resolution suffix; pinning them to
+  # one version keeps a single cordis instance in the graph, so the Context
+  # augmentations every package declares merge into one interface.
+  '@deepseek-ai/cordis': 4.0.5
+  '@deepseek-ai/cordis-plugin-include': 1.0.6
+  '@deepseek-ai/cordis-plugin-loader': 1.0.6
+  '@deepseek-ai/cosmokit': 1.8.6
+  '@deepseek-ai/schemastery': 3.18.5
+  # The vendored protocol copy is the one the typert generator can attribute
+  # Remote decorators to; link it so type and runtime resolution agree.
+  '@deepseek-ai/dsh-typert-protocol': workspace:^
+  '@dsh-undo/rollback-fork': workspace:^
+  '@dsh-undo/rollback-archive': workspace:^
+  '@dsh-undo/rollback-undo': workspace:^
+  '@dsh-undo/client-rollback-button': workspace:^
+  '@dsh-undo/client-rollback-settings': workspace:^
+  '@dsh-undo/client-rollback-toolcards': workspace:^
+  '@dsh-undo/client-rollback-trailfold': workspace:^
+# The generator collects Typert map augmentations from the whole program; in this
+# repository the dsh packages come from npm, so their augmentations would be
+# attributed to a face that does not own them. The patch keeps collection to
+# workspace-registered files only.
+patchedDependencies:
+  '@deepseek-ai/dsh-typert-generator@0.2.1-rc.4': patches/typert-generator-workspace-only.patch

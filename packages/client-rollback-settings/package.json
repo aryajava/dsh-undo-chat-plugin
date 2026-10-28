@@ -1,0 +1,91 @@
+{
+  "name": "@dsh-undo/client-rollback-settings",
+  "description": "Archive Tasks settings section for viewing and hiding archived sessions",
+  "version": "0.2.0",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aryajava/dsh-undo-chat-plugin.git",
+    "directory": "packages/client-rollback-settings"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "types": "./lib/types/client/index.d.ts",
+      "default": "./lib/client.js"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-api-remotes",
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-store",
+        "@deepseek-ai/dsh-client-ui-settings",
+        "@dsh-undo/rollback-archive",
+        "@dsh-undo/rollback-undo"
+      ],
+      "platform": "web"
+    }
+  },
+  "scripts": {
+    "bundle": "tsdown",
+    "watch": "tsdown --watch"
+  },
+  "license": "MIT",
+  "files": [
+    "lib/index.js",
+    "lib/client.js",
+    "lib/types/**/*.d.ts"
+  ],
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.5",
+    "@deepseek-ai/dsh-api-remotes": "^0.2.1-rc.3",
+    "@deepseek-ai/dsh-api-session-controller": "^0.2.1-rc.3",
+    "@deepseek-ai/dsh-client-locale": "^0.2.1-rc.3",
+    "@deepseek-ai/dsh-client-store": "^0.2.1-rc.3",
+    "@deepseek-ai/dsh-client-ui-primitives": "^0.2.1-rc.3",
+    "@deepseek-ai/dsh-client-ui-renderer": "^0.2.1-rc.3",
+    "@deepseek-ai/dsh-client-ui-settings": "^0.2.1-rc.3",
+    "@deepseek-ai/dsh-client-ui-workspace": "^0.2.1-rc.3",
+    "@deepseek-ai/dsh-client-ui-slots": "^0.2.1-rc.3",
+    "@dsh-undo/rollback-archive": "^0.2.0",
+    "@dsh-undo/rollback-undo": "^0.2.0",
+    "react": "^18.2.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.5",
+    "@deepseek-ai/dsh-api-remotes": "^0.2.1-rc.3",
+    "@deepseek-ai/dsh-api-session-controller": "^0.2.1-rc.3",
+    "@deepseek-ai/dsh-client-locale": "^0.2.1-rc.3",
+    "@deepseek-ai/dsh-client-store": "^0.2.1-rc.3",
+    "@deepseek-ai/dsh-client-ui-primitives": "^0.2.1-rc.3",
+    "@deepseek-ai/dsh-client-ui-renderer": "^0.2.1-rc.3",
+    "@deepseek-ai/dsh-client-ui-settings": "^0.2.1-rc.3",
+    "@deepseek-ai/dsh-client-ui-workspace": "^0.2.1-rc.3",
+    "@deepseek-ai/dsh-client-ui-slots": "^0.2.1-rc.3",
+    "@deepseek-ai/dsh-session": "^0.2.1-rc.3",
+    "@dsh-undo/rollback-archive": "^0.2.0",
+    "@dsh-undo/rollback-undo": "^0.2.0",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "~18.3.1",
+    "@types/react-dom": "~18.3.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}

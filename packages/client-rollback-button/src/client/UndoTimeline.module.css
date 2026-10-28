@@ -1,0 +1,220 @@
+.mask {
+  /* Some dsh surfaces (including the light theme input dock) do not publish
+     the alias tokens. Keep this overlay self-contained when that happens. */
+  --undo-mask-bg: var(--dsw-alias-bg-layer-1, var(--dsw-alias-bg-l1, var(--dsw-bg, #ffffff)));
+  --undo-mask-fg: var(--dsw-alias-label-primary, var(--dsw-text-primary, #18181b));
+  --undo-mask-muted: var(--dsw-alias-label-secondary, var(--dsw-text-secondary, #52525b));
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  /* The timeline itself is a focused surface, not just its detail card. */
+  background: color-mix(in srgb, var(--undo-mask-bg) 58%, transparent);
+  backdrop-filter: blur(10px) brightness(0.84) saturate(0.88);
+  transition: backdrop-filter 180ms ease, background-color 180ms ease;
+}
+
+.mask::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: '';
+  opacity: 0;
+  background:
+    radial-gradient(ellipse 42% 34% at 50% 50%, color-mix(in srgb, var(--undo-mask-fg) 11%, transparent), transparent 74%),
+    radial-gradient(ellipse 30% 28% at 42% 64%, color-mix(in srgb, var(--undo-mask-muted) 7%, transparent), transparent 78%);
+  filter: blur(18px);
+  transition: opacity 180ms ease;
+}
+
+.dialog {
+  /* Alias tokens are optional in dsh themes.  Each token must have a
+     complete fallback chain: an unresolved custom property invalidates every
+     declaration that uses it, which otherwise turns the SVG petals black. */
+  --undo-bg: var(--dsw-alias-bg-layer-2, var(--dsw-alias-bg-l2, var(--dsw-bg, #ffffff)));
+  --undo-fg: var(--dsw-alias-label-primary, var(--dsw-text-primary, #18181b));
+  --undo-muted: var(--dsw-alias-label-secondary, var(--dsw-text-secondary, #52525b));
+  --undo-tertiary: var(--dsw-alias-label-tertiary, var(--dsw-text-tertiary, #71717a));
+  --undo-border: var(--dsw-alias-border-l2, var(--dsw-border, #d4d4d8));
+  --undo-hover: var(--dsw-alias-interactive-bg-hover, var(--dsw-interactive-bg-hover, #f4f4f5));
+  --undo-selected: var(--dsw-alias-button-info-fill, var(--dsw-button-info-fill, #2563eb));
+  position: relative;
+  box-sizing: border-box;
+  width: min(100%, 232px);
+  min-height: 372px;
+  padding: 14px 16px;
+  border: 1px solid var(--undo-border);
+  border-radius: 10px;
+  background: var(--undo-bg);
+  color: var(--undo-fg);
+  box-shadow: 0 18px 48px color-mix(in srgb, var(--undo-fg) 22%, transparent);
+  font: inherit;
+}
+
+.point:focus-visible { outline: 2px solid var(--undo-fg); outline-offset: 2px; }
+
+.errorNotice {
+  position: absolute;
+  z-index: 6;
+  right: 12px;
+  bottom: 12px;
+  left: 12px;
+  padding: 7px 9px;
+  margin: 0;
+  border: 1px solid color-mix(in srgb, var(--undo-border) 72%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--undo-bg) 86%, transparent);
+  color: var(--undo-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.timeline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 344px;
+  max-height: min(680px, calc(100vh - 48px));
+}
+
+.timelineScrollable {
+  width: 100%;
+  max-height: min(440px, calc(100vh - 92px));
+  padding: 14px 4px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: y proximity;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 160ms ease;
+}
+.timelineScrollable:hover,
+.timelineScrollable:focus-visible { scrollbar-color: color-mix(in srgb, var(--undo-fg) 42%, transparent) transparent; }
+.timelineScrollable::-webkit-scrollbar { width: 3px; }
+.timelineScrollable::-webkit-scrollbar-thumb { border-radius: 4px; background: transparent; }
+.timelineScrollable:hover::-webkit-scrollbar-thumb,
+.timelineScrollable:focus-visible::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--undo-fg) 42%, transparent); }
+.timelineScrollable .axis { min-height: 100%; gap: 12px; zoom: 1; }
+.timelineScrollable .node { scroll-snap-align: center; }
+
+.axis {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-direction: column-reverse;
+  justify-content: center;
+  min-height: 96px;
+  gap: 18px;
+}
+
+.timelineCompact .axis { gap: 10px; zoom: 0.88; }
+.timelineDense .axis { gap: 6px; zoom: 0.74; }
+
+.axis::before {
+  position: absolute;
+  top: 16px;
+  bottom: 16px;
+  left: 15px;
+  width: 1px;
+  background: color-mix(in srgb, var(--undo-fg) 48%, transparent);
+  box-shadow: 0 0 5px color-mix(in srgb, var(--undo-fg) 20%, transparent);
+  content: '';
+}
+
+.loadingTimeline { opacity: 0.72; }
+.loadingNode { display: flex; align-items: center; justify-content: center; }
+.loadingDot { display: block; position: relative; z-index: 1; box-sizing: border-box; width: 7px; height: 7px; border: 1px solid var(--undo-fg); border-radius: 50%; background: var(--undo-bg); animation: loading-pulse 850ms ease-in-out infinite alternate; }
+
+/* Do not create per-node stacking contexts: every node hit target must stay
+   above the expanded petals, so the vertical axis remains a clear route. */
+.node { position: relative; width: 32px; height: 32px; }
+.selected { z-index: auto; }
+
+.point {
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--undo-fg);
+  cursor: pointer;
+  transition: transform 180ms ease;
+}
+
+.selected .point { transform: scale(1.22); }
+.point:disabled { cursor: default; }
+.dot { z-index: 1; width: 8px; height: 8px; border: 1px solid var(--undo-fg); border-radius: 50%; background: var(--undo-fg); box-shadow: 0 0 8px color-mix(in srgb, var(--undo-fg) 42%, transparent); transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease; }
+.selected .dot { border-color: color-mix(in srgb, var(--undo-fg) 82%, transparent); background: var(--dsw-alias-markdown-code-block, var(--undo-bg)); box-shadow: 0 0 0 2px color-mix(in srgb, var(--undo-fg) 16%, transparent), 0 0 10px color-mix(in srgb, var(--undo-fg) 68%, transparent), 0 0 18px color-mix(in srgb, var(--undo-fg) 20%, transparent); }
+.point:not(:disabled):not([aria-pressed='true']):hover .dot,
+.point:not([aria-pressed='true']):focus-visible .dot { border-color: var(--undo-fg); transform: scale(1.16); }
+
+/* The fan geometry stays untouched; only its contents and trigger changed. */
+.fan { position: absolute; top: 50%; left: 50%; z-index: 2; width: 120px; height: 120px; overflow: visible; transform: translate(-60px, -60px); }
+.timelineCompact .fan { transform: translate(-52px, -60px) scale(0.94); }
+.timelineDense .fan { transform: translate(-46px, -60px) scale(0.82); }
+.sector {
+  cursor: pointer;
+  fill: color-mix(in srgb, var(--undo-bg) 84%, var(--undo-fg) 16%);
+  /* This is the petal's own quiet contour, not the browser focus ring. */
+  stroke: color-mix(in srgb, var(--undo-fg) 58%, transparent);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sector-open 180ms ease both;
+  transition: opacity 150ms ease, transform 180ms ease, filter 180ms ease, fill 180ms ease, stroke 180ms ease;
+  vector-effect: non-scaling-stroke;
+}
+.inspectSector { animation-delay: 42ms; }
+.sectorHovered { filter: drop-shadow(0 0 7px color-mix(in srgb, var(--undo-fg) 32%, transparent)); transform: scale(1.1); fill: color-mix(in srgb, var(--undo-bg) 68%, var(--undo-fg) 32%); stroke: var(--undo-fg); }
+/* SVG paths receive a browser-generated rounded rectangle on pointer focus.
+   Their fill/stroke and label already carry the focus state, so suppress only
+   that generic rectangle for both pointer and keyboard focus. */
+.sector:focus,
+.sector:focus-visible {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
+}
+.sector[aria-disabled='true'] { cursor: default; opacity: 0.45; }
+.fanIcon { pointer-events: none; fill: none; stroke: var(--undo-fg); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform-box: fill-box; transform-origin: center; transform: scale(0.5); }
+
+.fanLabel {
+  position: absolute;
+  z-index: 5;
+  top: -27px;
+  left: 70px;
+  padding: 3px 6px;
+  border: 1px solid var(--undo-border);
+  border-radius: 5px;
+  background: var(--undo-bg);
+  color: var(--undo-muted);
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--undo-fg) 12%, transparent);
+}
+
+.inspectLabel { top: 43px; }
+
+/* Native trajectory remains the reader. This is only the quiet anchor that
+   identifies the prompt selected from the undo axis. */
+.trajectorySelected > * {
+  background: color-mix(in srgb, var(--dsw-alias-interactive-bg-hover, var(--dsw-interactive-bg-hover, #f4f4f5)) 78%, transparent) !important;
+  transition: background-color 180ms ease;
+}
+.trajectorySelected > :first-child {
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--dsw-alias-label-primary, var(--dsw-text-primary, #18181b)) 62%, transparent);
+}
+
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+@keyframes sector-open { from { opacity: 0; } to { opacity: 1; } }
+@keyframes loading-pulse { from { box-shadow: 0 0 0 1px color-mix(in srgb, var(--undo-fg) 8%, transparent); transform: scale(0.92); } to { box-shadow: 0 0 10px color-mix(in srgb, var(--undo-fg) 38%, transparent); transform: scale(1.08); } }

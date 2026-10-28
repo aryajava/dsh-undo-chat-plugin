@@ -1,0 +1,37 @@
+# The dsh-undo-plugin bundle patch: conversation rollback + archive tasks
+# as installable plugin rows. Applied after the target profile's base bundle;
+# rows here insert new plugin entries. `dshHomePath` is the host-side
+# expression the dsh boot injects for application-data roots.
+#
+# Headless profiles may drop the four `client-rollback-*` rows (they require
+# the dsh-web-app browser surface).
+- insert:
+    - id: rollback-fork
+      name: '@dsh-undo/rollback-fork'
+
+    - id: rollback-archive
+      name: '@dsh-undo/rollback-archive'
+      config:
+        root: !!js dshHomePath('rollback-archive')
+
+    - id: rollback-undo
+      name: '@dsh-undo/rollback-undo'
+      config:
+        root: !!js dshHomePath('rollback-undo')
+
+    - id: client-rollback-button
+      name: '@dsh-undo/client-rollback-button'
+
+    - id: client-rollback-settings
+      name: '@dsh-undo/client-rollback-settings'
+
+    - id: client-rollback-toolcards
+      name: '@dsh-undo/client-rollback-toolcards'
+
+    - id: client-rollback-trailfold
+      name: '@dsh-undo/client-rollback-trailfold'
+
+# dsh 0.1.x shipped ui-settings-archive / session-archive rows that claimed the
+# sessionArchive Remote namespace first; both packages are gone in dsh 0.2.x
+# (the runtime manifest has no archive packages), so this bundle owns the
+# namespace without disabling anything and no patch row can go missing.
